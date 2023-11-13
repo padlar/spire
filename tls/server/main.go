@@ -1,0 +1,64 @@
+package main
+
+import (
+	"bufio"
+	"context"
+	"fmt"
+	"log"
+	"net"
+
+	"github.com/spiffe/go-spiffe/v2/spiffeid"
+	"github.com/spiffe/go-spiffe/v2/spiffetls"
+	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
+)
+
+const (
+	defaultWorkloadAPIAddress = "unix:///tmp/agent.sock"
+	serverAddress             = "0.0.0.0:33333"
+)
+
+func main() {
+	if err := run(context.Background()); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run(ctx context.Context) error {
+	clientID := spiffeid.RequireFromString("spiffe://cluster.example.com/ns/client/sa/default")
+
+	listener, err := spiffetls.Listen(ctx, "tcp", serverAddress, tlsconfig.AuthorizeID(clientID))
+	if err != nil {
+		return fmt.Errorf("unable to create TLS listener: %w", err)
+	}
+	defer listener.Close()
+
+	// Handle connections
+	for {
+		fmt.Println("looping to accept connections")
+		conn, err := listener.Accept()
+		if err != nil {
+			return fmt.Errorf("failed to accept connection: %w", err)
+		}
+		go handleConnection(conn)
+	}
+}
+
+func handleConnection(conn net.Conn) {
+	defer conn.Close()
+
+	fmt.Println("Inside handle connection")
+
+	// Read incoming data into buffer
+	req, err := bufio.NewReader(conn).ReadString('\n')
+	if err != nil {
+		log.Printf("Error reading incoming data: %v", err)
+		return
+	}
+	log.Printf("Client says: %q", req)
+
+	// Send a response back to the client
+	if _, err = conn.Write([]byte("Hello client\n")); err != nil {
+		log.Printf("Unable to send response: %v", err)
+		return
+	}
+}

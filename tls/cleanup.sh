@@ -1,0 +1,2 @@
+k delete -f config/
+
