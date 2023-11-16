@@ -1,0 +1,41 @@
+Found 5 entries
+Entry ID         : a7cff03d-7ab2-4cc0-af5b-91ec7120c42c
+SPIFFE ID        : spiffe://example.org/ns/client/sa/default
+Parent ID        : spiffe://example.org/spire/agent/k8s_psat/example-cluster/c02e9614-f19c-476a-8f21-e34ead80bcc3
+Revision         : 0
+X509-SVID TTL    : default
+JWT-SVID TTL     : default
+Selector         : k8s:pod-uid:5c427891-c2dd-4de6-8467-b3a56f13036e
+
+Entry ID         : 53eea032-39d3-41c7-833b-2f1259e04225
+SPIFFE ID        : spiffe://example.org/ns/server/sa/default
+Parent ID        : spiffe://example.org/spire/agent/k8s_psat/example-cluster/c02e9614-f19c-476a-8f21-e34ead80bcc3
+Revision         : 0
+X509-SVID TTL    : default
+JWT-SVID TTL     : default
+Selector         : k8s:pod-uid:3c5ffdc5-418a-4fa0-b2d1-1af82a3e1029
+
+Entry ID         : 0ddbcc57-8ed4-4901-a5c3-f175ca5be36b
+SPIFFE ID        : spiffe://example.org/ns/spire-system/sa/spire-agent
+Parent ID        : spiffe://example.org/spire/agent/k8s_psat/example-cluster/c02e9614-f19c-476a-8f21-e34ead80bcc3
+Revision         : 0
+X509-SVID TTL    : default
+JWT-SVID TTL     : default
+Selector         : k8s:pod-uid:bca61e77-64c7-40e9-8807-541ebf1659da
+
+Entry ID         : 93138682-64ba-4a87-904e-2624000ec637
+SPIFFE ID        : spiffe://example.org/ns/spire-system/sa/spire-server
+Parent ID        : spiffe://example.org/spire/agent/k8s_psat/example-cluster/c02e9614-f19c-476a-8f21-e34ead80bcc3
+Revision         : 0
+X509-SVID TTL    : default
+JWT-SVID TTL     : default
+Selector         : k8s:pod-uid:91b610f6-53e4-4a1f-8a4c-fad2250f9f7a
+
+Entry ID         : fa68fad3-8eda-4c91-bb64-edaeed11d373
+SPIFFE ID        : spiffe://example.org/ns/spire-system/sa/spire-spiffe-csi-driver
+Parent ID        : spiffe://example.org/spire/agent/k8s_psat/example-cluster/c02e9614-f19c-476a-8f21-e34ead80bcc3
+Revision         : 0
+X509-SVID TTL    : default
+JWT-SVID TTL     : default
+Selector         : k8s:pod-uid:b2af660c-0b9e-4c4f-b038-14bd49c64d86
+

@@ -1,0 +1,87 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: server
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: helper-config
+data:
+    helper.conf: |
+      agentAddress = "/spiffe-workload-api/agent.sock"
+      cmd = ""
+      cmdArgs = ""
+      certDir = "/run/go-server/certs/"
+      renewSignal = "SIGUSR1"
+      svidFileName = "svid.crt"
+      svidKeyFileName = "svid.key"
+      svidBundleFileName = "root.crt"
+
+  ---
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: server
+    namespace: server
+  spec:
+    selector:
+      matchLabels:
+        app: server
+    template:
+      metadata:
+        labels:
+          app: server
+    spec:
+      containers:
+        - name: server
+          image: server:v0.6.0
+          volumeMounts:
+            - name: svid-dir
+              mountPath: /run/go-server/certs
+              readOnly: true
+          env:
+            - name: SPIFFE_ENDPOINT_SOCKET
+              value: unix:///spiffe-workload-api/agent.sock
+          ports:
+            - containerPort: 33333
+        - name: spiffe-helper
+          image: spiffe-helper
+          args:
+            - --config=/etc/config/helper.conf
+          volumeMounts:
+            - name: svid-dir
+              mountPath: /run/go-server/certs
+            - name: spiffe-workload-api
+              mountPath: /spiffe-workload-api
+              readOnly: true
+            - name: helper-config
+              mountPath: /etc/config
+          env:
+            - name: SPIFFE_ENDPOINT_SOCKET
+              value: unix:///spiffe-workload-api/agent.sock
+          ports:
+      volumes:
+        - emptyDir: {}
+          name: svid-dir
+        - name: spiffe-workload-api
+          csi:
+            driver: "csi.spiffe.io"
+            readOnly: true
+        - name: helper-config
+          configMap:
+            name: helper-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  namespace: server
+spec:
+  selector:
+    app: server
+  ports:
+    - protocol: TCP
+      port: 33333
+      targetPort: 33333
